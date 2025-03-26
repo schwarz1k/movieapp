@@ -1,0 +1,37 @@
+.action-buttons {
+    position: relative;
+}
+
+.action-buttons__list {
+    list-style: none;
+    max-width: 146px;
+    margin: 0 auto 0 auto;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.action-buttons__list::before {
+    content: '';
+    position: absolute;
+    width: 146px;
+    height: 1px;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+.action-buttons__list li button  {
+    color: rgba(0, 0, 0, 0.65);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 157%;
+    border: none;
+    background: none;
+}
+
+.action-buttons__list .selected {
+    color: #1890ff;
+    border-bottom: 2px solid #1890ff;
+}

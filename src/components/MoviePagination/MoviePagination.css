@@ -1,0 +1,8 @@
+.movie-pagination {
+    margin: 36px 0 0 0;
+    display: flex;
+}
+
+.movie-pagination ul {
+    margin: 0 auto;
+}
