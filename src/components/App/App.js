@@ -10,25 +10,35 @@ import './App.css'
 export default class App extends Component {
   state = {
     movie: [],
+    loading: true,
+    result: true,
+    error: false,
   }
 
   componentDidMount() {
     movieService
       .getResource({
-        query: 'Казино',
+        query: 'Титаник',
         include_adult: false,
         language: 'ru-RU',
         page: 1,
       })
       .then((res) => {
-        this.setState({ movie: res.results })
+        if (res.results.length === 0) {
+          this.setState({ result: false, loading: false })
+        } else {
+          this.setState({ movie: res.results, loading: false, result: true })
+        }
       })
       .catch((error) => {
-        console.error('Ошибка при получении данных:', error)
+        this.setState({ loading: false, error: true })
+        console.log(error)
       })
   }
 
   render() {
+    const { movie, loading, result, error } = this.state
+
     return (
       <section className="app">
         <div className="action-buttons">
@@ -38,7 +48,7 @@ export default class App extends Component {
           </ul>
         </div>
         <Search />
-        <FilmList movies={this.state.movie} />
+        <FilmList movies={movie} loading={loading} result={result} error={error} />
       </section>
     )
   }

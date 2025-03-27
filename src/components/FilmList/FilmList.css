@@ -12,3 +12,11 @@
        grid-template-columns: 1fr;
     }
 }
+
+.film-list__clear {
+    color: #1890ff;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 130px;
+}
