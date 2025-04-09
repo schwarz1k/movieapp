@@ -1,43 +1,56 @@
 import { Component } from 'react'
+import debounce from 'lodash.debounce'
 
 import ActionButtons from '../ActionButtons/ActionButtons'
 import Search from '../Search/Search'
 import FilmList from '../FilmList/FilmList'
-import movieService from '../../services/movieService'
+import MovieLoader from '../MovieLoader/MovieLoader'
 
 import './App.css'
 
 export default class App extends Component {
-  state = {
-    movie: [],
-    loading: true,
-    result: true,
-    error: false,
+  constructor(props) {
+    super(props)
+
+    this.debouncedSearchInputHandler = debounce(this.searchInputHandler, 500)
   }
 
-  componentDidMount() {
-    movieService
-      .getResource({
-        query: 'Титаник',
-        include_adult: false,
-        language: 'ru-RU',
-        page: 1,
-      })
-      .then((res) => {
-        if (res.results.length === 0) {
-          this.setState({ result: false, loading: false })
-        } else {
-          this.setState({ movie: res.results, loading: false, result: true })
-        }
-      })
-      .catch((error) => {
-        this.setState({ loading: false, error: true })
-        console.log(error)
-      })
+  state = {
+    movies: [],
+    loading: false,
+    result: false,
+    error: false,
+    searchValue: '',
+    currentPage: 1,
+    totalResults: 0,
+  }
+
+  handleMoviesLoaded = (movies, totalResults) => {
+    if (movies.length === 0) {
+      this.setState({ result: false, loading: false })
+    } else {
+      this.setState({ movies, loading: false, result: true, totalResults })
+    }
+  }
+
+  handleError = () => {
+    this.setState({ loading: false, error: true })
+  }
+
+  searchInputHandler = (value) => {
+    if (value.trim() === '') {
+      this.setState({ searchValue: '', movies: [], loading: false, result: false })
+    } else {
+      this.setState({ searchValue: value, loading: true, currentPage: 1 })
+    }
+  }
+
+  handlePageChange = (page) => {
+    this.setState({ currentPage: page, loading: true })
   }
 
   render() {
-    const { movie, loading, result, error } = this.state
+    const { movies, loading, result, error, currentPage, totalResults } = this.state
 
     return (
       <section className="app">
@@ -47,8 +60,22 @@ export default class App extends Component {
             <ActionButtons text="Rated" isSelected={false} onClick={() => console.log('Клик!')} id="ratedButton" />
           </ul>
         </div>
-        <Search />
-        <FilmList movies={movie} loading={loading} result={result} error={error} />
+        <Search searchInputHandler={this.debouncedSearchInputHandler} />
+        <MovieLoader
+          query={this.state.searchValue}
+          currentPage={this.state.currentPage}
+          onMoviesLoaded={(movies, totalResults) => this.handleMoviesLoaded(movies, totalResults)}
+          onError={this.handleError}
+        />
+        <FilmList
+          movies={movies}
+          loading={loading}
+          result={result}
+          error={error}
+          currentPage={currentPage}
+          totalResults={totalResults}
+          onPageChange={this.handlePageChange}
+        />
       </section>
     )
   }

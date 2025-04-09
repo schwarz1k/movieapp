@@ -8,12 +8,11 @@ class MovieService {
     const defaultParams = {
       include_adult: false,
       language: 'ru-RU',
-      page: 1,
     }
 
     const finalParams = { ...defaultParams, ...params }
 
-    const queryString = new URLSearchParams(Object.entries(finalParams).map(([key, value]) => [key, String(value)]))
+    const queryString = new URLSearchParams(finalParams).toString()
     const url = `${this._apiBase}?${queryString}`
 
     const res = await fetch(url, {

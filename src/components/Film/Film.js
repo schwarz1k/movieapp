@@ -1,4 +1,3 @@
-// import PropTypes from 'prop-types'
 import { Component } from 'react'
 import { Rate } from 'antd'
 import { format } from 'date-fns'
@@ -18,6 +17,13 @@ const truncateText = (text, maxLength) => {
   return truncatedText.trim() + (truncatedText.length < text.length ? ' ...' : '')
 }
 
+const formatReleaseDate = (date) => {
+  if (!date || isNaN(new Date(date).getTime())) {
+    return 'Дата неизвестна'
+  }
+  return format(new Date(date), 'MMMM dd, yyyy')
+}
+
 export default class Film extends Component {
   state = {
     isDescriptionVisible: false,
@@ -33,10 +39,6 @@ export default class Film extends Component {
     const { id, title, release, description, voteAvg, src } = this.props
     const { isDescriptionVisible } = this.state
     const shortDescription = truncateText(description, 180)
-
-    const formatReleaseDate = (date) => {
-      return format(new Date(date), 'MMMM dd, yyyy')
-    }
 
     return (
       <li className="film-item" key={id}>

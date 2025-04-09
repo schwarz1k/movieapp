@@ -9,7 +9,7 @@ import './FilmList.css'
 
 export default class FilmList extends Component {
   render() {
-    const { movies, loading, result, error } = this.props
+    const { movies, loading, result, error, currentPage, totalResults, onPageChange } = this.props
 
     if (loading) {
       return <Loader />
@@ -41,7 +41,7 @@ export default class FilmList extends Component {
     return (
       <>
         <ul className="film-list">{elements}</ul>
-        <MoviePagination />
+        <MoviePagination currentPage={currentPage} totalResults={totalResults} onPageChange={onPageChange} />
       </>
     )
   }

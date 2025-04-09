@@ -3,10 +3,10 @@ import { Pagination } from 'antd'
 
 import './MoviePagination.css'
 
-const MoviePagination = () => {
+const MoviePagination = ({ currentPage, totalResults, onPageChange }) => {
   return (
     <div className="movie-pagination">
-      <Pagination defaultCurrent={1} total={50} />
+      <Pagination current={currentPage} total={totalResults} pageSize={20} onChange={onPageChange} />
     </div>
   )
 }
