@@ -1,5 +1,5 @@
 class MovieService {
-  _apiBase = 'https://api.themoviedb.org/3/search/movi'
+  _apiBase = 'https://api.themoviedb.org/3/search/movie'
 
   async getResource(params = {}) {
     const APIKEY =
