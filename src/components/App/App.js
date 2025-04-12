@@ -5,13 +5,11 @@ import ActionButtons from '../ActionButtons/ActionButtons'
 import Search from '../Search/Search'
 import FilmList from '../FilmList/FilmList'
 import MovieLoader from '../MovieLoader/MovieLoader'
-
 import './App.css'
 
 export default class App extends Component {
   constructor(props) {
     super(props)
-
     this.debouncedSearchInputHandler = debounce(this.searchInputHandler, 500)
   }
 
@@ -23,13 +21,14 @@ export default class App extends Component {
     searchValue: '',
     currentPage: 1,
     totalResults: 0,
+    activeTab: 'search',
   }
 
   handleMoviesLoaded = (movies, totalResults) => {
-    if (movies.length === 0) {
-      this.setState({ result: false, loading: false })
+    if (!movies || movies.length === 0) {
+      this.setState({ movies: [], result: false, loading: false, totalResults: 0 })
     } else {
-      this.setState({ movies, loading: false, result: true, totalResults })
+      this.setState({ movies, totalResults, result: true, loading: false })
     }
   }
 
@@ -50,23 +49,39 @@ export default class App extends Component {
   }
 
   render() {
-    const { movies, loading, result, error, currentPage, totalResults } = this.state
+    const { movies, loading, result, error, currentPage, totalResults, activeTab, searchValue } = this.state
 
     return (
       <section className="app">
         <div className="action-buttons">
           <ul className="action-buttons__list">
-            <ActionButtons text="Search" isSelected={true} onClick={() => console.log('Клик!')} id="searchButton" />
-            <ActionButtons text="Rated" isSelected={false} onClick={() => console.log('Клик!')} id="ratedButton" />
+            <ActionButtons
+              text="Search"
+              isSelected={activeTab === 'search'}
+              onClick={() => this.setState({ activeTab: 'search', loading: true })}
+              id="searchButton"
+            />
+            <ActionButtons
+              text="Rated"
+              isSelected={activeTab === 'rated'}
+              onClick={() => this.setState({ activeTab: 'rated', loading: true })}
+              id="ratedButton"
+            />
           </ul>
         </div>
-        <Search searchInputHandler={this.debouncedSearchInputHandler} />
+
+        {activeTab === 'search' && (
+          <Search defaultValue={searchValue} searchInputHandler={this.debouncedSearchInputHandler} />
+        )}
+
         <MovieLoader
-          query={this.state.searchValue}
-          currentPage={this.state.currentPage}
-          onMoviesLoaded={(movies, totalResults) => this.handleMoviesLoaded(movies, totalResults)}
+          activeTab={activeTab}
+          query={searchValue}
+          currentPage={currentPage}
+          onMoviesLoaded={this.handleMoviesLoaded}
           onError={this.handleError}
         />
+
         <FilmList
           movies={movies}
           loading={loading}
